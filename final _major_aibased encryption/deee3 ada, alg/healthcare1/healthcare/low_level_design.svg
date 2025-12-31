@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <defs>
+    <style>
+      .box { fill:#f7f9fc; stroke:#1f3b4d; stroke-width:2; }
+      .group { fill:#eef3f7; stroke:#2c5a71; stroke-width:2; }
+      .title { font: bold 20px sans-serif; fill:#12232e; }
+      .label { font: 16px sans-serif; fill:#12232e; }
+      .sm { font: 14px sans-serif; fill:#394a59; }
+      .log { fill:#fff7e6; stroke:#c17f2a; stroke-width:2; }
+      .db { fill:#f0fff4; stroke:#2a7f52; stroke-width:2; }
+      .arrow { stroke:#334e68; stroke-width:2; fill:none; }
+      .arrow-label { font: 12px sans-serif; fill:#334e68; }
+      .dashed { stroke-dasharray:6 6; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#334e68" />
+    </marker>
+  </defs>
+
+  <text x="800" y="40" text-anchor="middle" class="title">Healthcare Security Low-Level Design</text>
+
+  <!-- Views Group -->
+  <rect x="40" y="80" width="420" height="260" rx="8" class="group" />
+  <text x="250" y="110" text-anchor="middle" class="label">Views</text>
+  <rect x="60" y="140" width="380" height="80" rx="8" class="box" />
+  <text x="250" y="170" text-anchor="middle" class="sm">labs/views.py</text>
+  <text x="250" y="195" text-anchor="middle" class="sm">LAB_RESULT_UPLOAD logging (algo/key size via dynamic helpers)</text>
+  <rect x="60" y="230" width="380" height="80" rx="8" class="box" />
+  <text x="250" y="260" text-anchor="middle" class="sm">doctors/views.py</text>
+  <text x="250" y="285" text-anchor="middle" class="sm">PRESCRIPTION_UPLOAD logging (algo/key size via dynamic helpers)</text>
+
+  <!-- Data Collector -->
+  <rect x="560" y="80" width="300" height="100" rx="8" class="box" />
+  <text x="710" y="110" text-anchor="middle" class="label">security/data_collector.py</text>
+  <text x="710" y="135" text-anchor="middle" class="sm">Collects runtime metrics (cpu, battery, latency, etc.)</text>
+
+  <!-- AIEncryptor Core -->
+  <rect x="520" y="220" width="380" height="220" rx="8" class="group" />
+  <text x="710" y="250" text-anchor="middle" class="label">security/AIEncryptor.py</text>
+  <text x="710" y="275" text-anchor="middle" class="sm">_compute_dynamic_score</text>
+  <text x="710" y="295" text-anchor="middle" class="sm">_select_dynamic_params</text>
+  <text x="710" y="315" text-anchor="middle" class="sm">encrypt_with_ai / decrypt_with_ai</text>
+  <text x="710" y="335" text-anchor="middle" class="sm">_write_encryption_log (unified structured JSON)</text>
+  <text x="710" y="355" text-anchor="middle" class="sm">Notifications: selection/adaptive/encrypt/decrypt/key exchange</text>
+
+  <!-- Algorithms Group -->
+  <rect x="980" y="80" width="560" height="360" rx="8" class="group" />
+  <text x="1260" y="110" text-anchor="middle" class="label">security/encryption_algorithms.py</text>
+  <rect x="1000" y="140" width="240" height="80" rx="8" class="box" />
+  <text x="1120" y="170" text-anchor="middle" class="sm">AES-GCM / ChaCha20</text>
+  <text x="1120" y="195" text-anchor="middle" class="sm">Symmetric encryption</text>
+  <rect x="1260" y="140" width="260" height="80" rx="8" class="box" />
+  <text x="1390" y="170" text-anchor="middle" class="sm">RSA</text>
+  <text x="1390" y="195" text-anchor="middle" class="sm">Public key PEM, fingerprint</text>
+  <rect x="1000" y="230" width="240" height="80" rx="8" class="box" />
+  <text x="1120" y="260" text-anchor="middle" class="sm">ECC (secp256r1)</text>
+  <text x="1120" y="285" text-anchor="middle" class="sm">Ephemeral public key PEM</text>
+  <rect x="1260" y="230" width="260" height="80" rx="8" class="box" />
+  <text x="1390" y="260" text-anchor="middle" class="sm">Hybrid ECC + AES</text>
+  <text x="1390" y="285" text-anchor="middle" class="sm">ECC-wrapped AES key</text>
+  <rect x="1000" y="320" width="520" height="100" rx="8" class="box" />
+  <text x="1260" y="350" text-anchor="middle" class="sm">Key exchange and metadata capture (public_key_pem, private_key_fingerprint)</text>
+
+  <!-- Anomaly Detection -->
+  <rect x="40" y="380" width="420" height="160" rx="8" class="group" />
+  <text x="250" y="410" text-anchor="middle" class="label">Anomaly Detection</text>
+  <rect x="60" y="430" width="180" height="90" rx="8" class="box" />
+  <text x="150" y="460" text-anchor="middle" class="sm">security/anomaly_detector.py</text>
+  <text x="150" y="485" text-anchor="middle" class="sm">IsolationForest / One-Class SVM</text>
+  <rect x="260" y="430" width="180" height="90" rx="8" class="box" />
+  <text x="350" y="460" text-anchor="middle" class="sm">security/anomaly_output_logger.py</text>
+  <text x="350" y="485" text-anchor="middle" class="sm">Mirrors events to daily log & notifications</text>
+
+  <!-- Logging Outputs -->
+  <rect x="520" y="480" width="380" height="220" rx="8" class="group" />
+  <text x="710" y="510" text-anchor="middle" class="label">Logs</text>
+  <rect x="540" y="540" width="340" height="60" rx="8" class="log" />
+  <text x="710" y="570" text-anchor="middle" class="sm">security/logs/encryption_log_YYYYMMDD.log</text>
+  <rect x="540" y="610" width="340" height="60" rx="8" class="log" />
+  <text x="710" y="640" text-anchor="middle" class="sm">security/logs/ai_anomaly_output.log</text>
+  <rect x="540" y="680" width="340" height="60" rx="8" class="log" />
+  <text x="710" y="710" text-anchor="middle" class="sm">encryption_debug.log (security logger)</text>
+
+  <!-- Settings / Logger Config -->
+  <rect x="980" y="460" width="300" height="120" rx="8" class="box" />
+  <text x="1130" y="490" text-anchor="middle" class="label">healthcare/settings.py</text>
+  <text x="1130" y="515" text-anchor="middle" class="sm">Logger: security → console + file</text>
+  <text x="1130" y="540" text-anchor="middle" class="sm">File handler → encryption_debug.log</text>
+
+  <!-- Crypto Logger / DB -->
+  <rect x="1300" y="460" width="240" height="120" rx="8" class="box" />
+  <text x="1420" y="490" text-anchor="middle" class="label">security/crypto_logger.py</text>
+  <text x="1420" y="515" text-anchor="middle" class="sm">Optional DB logging</text>
+  <ellipse cx="1420" cy="620" rx="120" ry="40" class="db" />
+  <text x="1420" y="625" text-anchor="middle" class="sm">Security DB</text>
+
+  <!-- Arrows: Views → AIEncryptor -->
+  <line x1="440" y1="180" x2="520" y2="260" class="arrow" marker-end="url(#arrow)" />
+  <text x="470" y="220" class="arrow-label">dynamic helpers</text>
+  <line x1="440" y1="270" x2="520" y2="300" class="arrow" marker-end="url(#arrow)" />
+  <text x="470" y="290" class="arrow-label">encrypt/decrypt</text>
+
+  <!-- Arrow: DataCollector → AIEncryptor -->
+  <line x1="710" y1="180" x2="710" y2="220" class="arrow" marker-end="url(#arrow)" />
+  <text x="730" y="205" class="arrow-label">metrics</text>
+
+  <!-- Arrows: AIEncryptor → Algorithms -->
+  <line x1="900" y1="300" x2="980" y2="300" class="arrow" marker-end="url(#arrow)" />
+  <text x="940" y="290" class="arrow-label">cipher ops</text>
+
+  <!-- Arrows: AIEncryptor → Logs -->
+  <line x1="710" y1="440" x2="710" y2="540" class="arrow" marker-end="url(#arrow)" />
+  <text x="730" y="480" class="arrow-label">_write_encryption_log</text>
+  <line x1="820" y1="420" x2="980" y2="520" class="arrow dashed" marker-end="url(#arrow)" />
+  <text x="900" y="470" class="arrow-label">security logger</text>
+
+  <!-- Arrows: Anomaly → Logs & Notifications -->
+  <line x1="220" y1="475" x2="260" y2="475" class="arrow" marker-end="url(#arrow)" />
+  <text x="240" y="465" class="arrow-label">events</text>
+  <line x1="350" y1="520" x2="540" y2="570" class="arrow" marker-end="url(#arrow)" />
+  <text x="430" y="550" class="arrow-label">daily log</text>
+  <line x1="350" y1="540" x2="540" y2="710" class="arrow" marker-end="url(#arrow)" />
+  <text x="430" y="640" class="arrow-label">notifications</text>
+
+  <!-- Arrows: Settings → security logger (debug) -->
+  <line x1="1130" y1="580" x2="710" y2="710" class="arrow dashed" marker-end="url(#arrow)" />
+  <text x="960" y="650" class="arrow-label">handler → file</text>
+
+  <!-- Arrows: AIEncryptor → CryptoLogger → DB -->
+  <line x1="900" y1="360" x2="1300" y2="520" class="arrow dashed" marker-end="url(#arrow)" />
+  <text x="1060" y="440" class="arrow-label">optional DB log</text>
+  <line x1="1420" y1="580" x2="1420" y2="600" class="arrow" marker-end="url(#arrow)" />
+  <text x="1440" y="595" class="arrow-label">persist</text>
+</svg>

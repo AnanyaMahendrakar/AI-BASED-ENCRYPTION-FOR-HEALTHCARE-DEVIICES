@@ -1,0 +1,473 @@
+# Project Report: AI-Based Secure Healthcare IoT System
+
+## 1. Introduction
+
+This report details the design, implementation, and underlying principles of a secure healthcare IoT system. The project focuses on leveraging Artificial Intelligence (AI) to enhance the security and privacy of sensitive patient data collected and managed within a healthcare environment, particularly for IoT devices. It addresses critical challenges in healthcare data protection, including data confidentiality, integrity, and availability, by integrating advanced encryption techniques, anomaly detection, and adaptive security mechanisms.
+
+## 2. Objective
+
+The primary objective of this project is to develop a robust and intelligent security framework for healthcare IoT devices and associated data. This involves:
+*   Implementing AI-driven encryption methods to protect patient records and communications.
+*   Ensuring secure storage and transmission of sensitive healthcare information.
+*   Detecting anomalous activities that might indicate security breaches or system malfunctions.
+*   Dynamically adapting security measures, including encryption algorithms, based on real-time contextual factors and AI-driven insights.
+*   Facilitating secure key exchange mechanisms for cryptographic operations.
+
+## 3. Problem Analysis
+
+Healthcare data is highly sensitive and a prime target for cyberattacks. Traditional security measures often struggle with the dynamic and resource-constrained nature of IoT environments. Key challenges include:
+*   **Data Confidentiality:** Preventing unauthorized access to patient health information (PHI).
+*   **Data Integrity:** Ensuring that data remains unaltered and trustworthy.
+*   **Data Availability:** Guaranteeing that authorized users can access data when needed.
+*   **Resource Constraints:** IoT devices often have limited computational power and battery life, making complex encryption challenging.
+*   **Dynamic Threat Landscape:** Security threats evolve rapidly, requiring adaptive defense mechanisms.
+*   **Key Management:** Securely generating, distributing, and managing cryptographic keys across numerous devices and users.
+
+## 4. Methodology
+
+The project employs a multi-layered security approach combining cryptographic techniques with AI-driven intelligence.
+*   **AI-Driven Encryption:** AI models analyze data characteristics and context to select optimal encryption algorithms and parameters.
+*   **Anomaly Detection:** Machine learning models continuously monitor system behavior to identify deviations from normal patterns, signaling potential threats.
+*   **Adaptive Security:** The system dynamically adjusts its security posture, including encryption strength and algorithm choice, in response to detected anomalies or changes in the operational environment.
+*   **Secure Key Exchange:** Elliptic Curve Cryptography (ECC) is utilized for efficient and secure exchange of cryptographic keys, crucial for establishing secure communication channels.
+*   **Django Framework:** The web application is built using Django, providing a robust and scalable platform for managing users, data, and interactions.
+
+## 5. Data Models
+
+The project utilizes several Django models to structure and manage healthcare-related data.
+
+*   **User (from `django.contrib.auth.models`):** Standard Django user model for authentication and authorization.
+*   **Profile (`users/models.py`):** Extends the User model to include roles (e.g., 'patient', 'doctor', 'lab technician') and potentially other user-specific attributes.
+*   **Doctor (`doctors/models.py`):** Stores information specific to doctors, linked to the User model. Includes specialty and workload.
+*   **Appointment (`patients/models.py`):** Records patient appointments with doctors.
+    *   `patient`: Foreign key to User.
+    *   `doctor`: Foreign key to Doctor.
+    *   `symptoms`: EncryptedTextField.
+    *   `preferred_date`: EncryptedTextField.
+    *   `preferred_time`: EncryptedTextField.
+    *   `is_approved`: Boolean.
+    *   `created_at`: DateTime.
+    *   `encrypted_data`: TextField (stores encrypted content).
+*   **Diagnosis (`patients/models.py`):** Stores medical diagnoses made by doctors for patients.
+    *   `patient`: Foreign key to User.
+    *   `doctor`: Foreign key to Doctor.
+    *   `diagnosis_text`: EncryptedTextField.
+    *   `notes`: EncryptedTextField.
+    *   `created_at`: DateTime.
+    *   `encrypted_data`: TextField (stores encrypted content).
+*   **Prescription (`patients/models.py`):** Manages prescriptions issued by doctors.
+    *   `patient`: Foreign key to User.
+    *   `doctor`: Foreign key to Doctor.
+    *   `file`: EncryptedFileField (stores encrypted prescription files).
+    *   `text`: EncryptedTextField (stores encrypted prescription text).
+    *   `encryption_algo`: CharField (records the encryption algorithm used).
+    *   `encrypted_data`: TextField (stores encrypted content).
+    *   `uploaded_at`: DateTime.
+*   **LabTestRequest (`labs/models.py`):** Records requests for lab tests.
+    *   `patient`: Foreign key to User.
+    *   `doctor`: Foreign key to User.
+    *   `lab_technician`: Foreign key to User.
+    *   `notes`: TextField.
+    *   `requested_at`: DateTime.
+*   **LabTestResult (`labs/models.py`):** Stores the results of lab tests.
+    *   `lab_test_request`: Foreign key to LabTestRequest.
+    *   `result_file`: FileField (likely EncryptedFileField in practice).
+    *   `result_text`: TextField (likely EncryptedTextField in practice).
+    *   `uploaded_at`: DateTime.
+
+## 6. Key Libraries and Packages
+
+The project relies on a set of Python libraries and Django packages to implement its functionalities. (A full list would typically be found in `requirements.txt` or `pyproject.toml`).
+
+*   **Django:** Web framework for rapid development.
+*   **Django REST Framework (DRF):** (Likely used for API endpoints, if any).
+*   **Scikit-learn:** For implementing AI/ML models (RandomForestClassifier, etc.).
+*   **NumPy, Pandas:** For data manipulation and numerical operations.
+*   **Cryptography libraries:** (e.g., `PyCryptodome`, `cryptography`) for cryptographic primitives (AES, ECC).
+*   **Pillow:** For image processing, especially with file uploads.
+*   **Other Django apps:** `django.contrib.admin`, `django.contrib.auth`, `django.contrib.contenttypes`, `django.contrib.sessions`, `django.contrib.messages`, `django.contrib.staticfiles`.
+
+## 7. Algorithms Used
+
+### 7.1. Encryption Algorithms
+
+*   **AES (Advanced Encryption Standard):** Likely used for symmetric encryption of data (both text and files) due to its speed and strong security. The `EncryptedTextField` and `EncryptedFileField` would manage the AES encryption/decryption.
+*   **ECC (Elliptic Curve Cryptography):** Used for asymmetric cryptography, primarily for:
+    *   **Key Exchange:** Securely exchanging symmetric keys (e.g., AES keys) between parties (patient, doctor, IoT device).
+    *   **Digital Signatures:** (Potentially) for verifying data integrity and authenticity.
+
+### 7.2. AI/Machine Learning Algorithms
+
+*   **Random Forest Classifier:**
+    *   **Application:** Used in `ai_algorithm_selector.pkl` for adaptive algorithm selection. This model likely classifies the optimal encryption algorithm based on input features (e.g., data sensitivity, network conditions, device capabilities).
+    *   **Location:** `c:\Users\SESA837127\Downloads\deee3 ada, alg\healthcare1\healthcare\ai_algorithm_selector.pkl`
+*   **Anomaly Detection Algorithm:**
+    *   **Application:** Used in `ai_entropy_model.pkl` to detect unusual patterns in data or system behavior. This could be an unsupervised learning algorithm (e.g., Isolation Forest, One-Class SVM) or a supervised one if labeled anomaly data is available.
+    *   **Location:** `c:\Users\SESA837127\Downloads\deee3 ada, alg\healthcare1\healthcare\ai_entropy_model.pkl`
+    *   **Related:** `c:\Users\SESA837127\Downloads\deee3 ada, alg\healthcare1\healthcare\ai_entropy_model_scaler.pkl` (for data preprocessing).
+*   **Algorithm Strength Predictor:**
+    *   **Application:** Used in `ai_strength_predictor.pkl` to predict the effectiveness or suitability of different encryption algorithms under various conditions. This model likely informs the adaptive algorithm selector.
+    *   **Location:** `c:\Users\SESA837127\Downloads\deee3 ada, alg\healthcare1\healthcare\ai_strength_predictor.pkl`
+
+### 7.3. AI-Based Encryption Details
+
+**Working:**
+The AI-based encryption in this project operates primarily through an adaptive mechanism. Instead of using a fixed encryption algorithm, the system leverages AI models to intelligently select the most appropriate encryption algorithm and parameters for a given piece of data or communication session. This adaptability is crucial for healthcare IoT environments where data sensitivity, device capabilities, network conditions, and evolving threat landscapes can vary significantly.
+
+The process generally involves:
+1.  **Contextual Data Collection:** Information about the data to be encrypted (e.g., its sensitivity level, type), the transmitting device (e.g., processing power, battery life), and the current environment (e.g., network latency, perceived threat level) is gathered.
+2.  **Algorithm Selection (AI-Driven):** The `ai_algorithm_selector.pkl` model, often informed by the `ai_strength_predictor.pkl` model, analyzes this contextual data. It then predicts or recommends the optimal encryption algorithm (e.g., AES-128, AES-256) and potentially its mode of operation or key length.
+3.  **Dynamic Encryption:** The chosen algorithm is then applied to encrypt the data. This ensures that highly sensitive data receives stronger encryption, while less critical data or resource-constrained devices can use more efficient algorithms without compromising baseline security.
+
+**Models Used and Content:**
+
+*   **`ai_algorithm_selector.pkl` (RandomForestClassifier):**
+    *   **Role:** This model is the core of the adaptive algorithm selection. It acts as a classifier that, given a set of input features (contextual data), outputs the recommended encryption algorithm.
+    *   **Content:** It's a trained `RandomForestClassifier` from Scikit-learn. Random Forests are an ensemble learning method that builds multiple decision trees and merges them together to get a more accurate and stable prediction.
+    *   **Training Data (Hypothesized):** The model would be trained on a dataset where features include:
+        *   Data sensitivity (e.g., low, medium, high for PHI).
+        *   Device CPU/memory usage.
+        *   Network bandwidth/latency.
+        *   Current threat intelligence scores.
+        *   Historical performance of different algorithms under similar conditions.
+        *   The target variable would be the "optimal" encryption algorithm for those conditions.
+
+*   **`ai_strength_predictor.pkl` (Likely a Regression Model):**
+    *   **Role:** This model likely works in conjunction with the `ai_algorithm_selector`. It could predict the "strength" or "suitability" score of various encryption algorithms given specific environmental and data parameters. This prediction can then be used as an input feature for the `ai_algorithm_selector` or directly inform the decision.
+    *   **Content:** While the exact model type isn't specified, it's likely a regression model (e.g., another Random Forest Regressor, Gradient Boosting Regressor) that outputs a continuous score.
+    *   **Training Data (Hypothesized):** Features would be similar to the selector model, but the target variable would be a numerical score representing algorithm strength, performance, or security level.
+
+**Why Only These Models and Algorithms Used:**
+
+*   **Random Forest (for `ai_algorithm_selector` and `ai_strength_predictor`):**
+    *   **Robustness:** Random Forests are known for their robustness against overfitting, ability to handle both numerical and categorical data, and good performance on a wide range of tasks.
+    *   **Interpretability (Relative):** While not as transparent as a single decision tree, feature importances can be extracted, offering some insight into why certain algorithms are chosen.
+    *   **Efficiency:** Once trained, prediction with Random Forests is relatively fast, which is important for real-time adaptive decisions in an IoT context.
+*   **AES (Advanced Encryption Standard):**
+    *   **Industry Standard:** AES is the most widely adopted symmetric encryption algorithm, recognized globally for its strong security and efficiency. It's suitable for bulk data encryption.
+    *   **Performance:** Highly optimized implementations are available, making it fast enough for many IoT devices, especially when combined with adaptive selection of key lengths (AES-128 vs. AES-256).
+*   **ECC (Elliptic Curve Cryptography):**
+    *   **Strong Security with Smaller Keys:** ECC provides equivalent security to RSA with significantly smaller key sizes, which is a major advantage for resource-constrained IoT devices (less storage, faster computations for key operations).
+    *   **Efficiency for Key Exchange:** Its efficiency makes it ideal for secure key exchange mechanisms, ensuring that symmetric keys can be securely established between communicating parties without excessive computational overhead.
+
+The combination of these AI models and cryptographic algorithms provides a powerful, adaptive, and efficient security framework tailored for the unique demands of healthcare IoT environments.
+
+### 7.4. Encryption and Decryption Process
+
+The project implements a robust encryption and decryption process primarily through custom Django model fields: `EncryptedTextField` and `EncryptedFileField`, located in `security/fields.py`. These fields abstract away the cryptographic complexities, allowing developers to define encrypted fields in models much like standard Django fields.
+
+**Encryption Flow (Saving Data):**
+1.  **Data Input:** When a user (e.g., a doctor) inputs sensitive text data (e.g., diagnosis, prescription text) or uploads a file (e.g., prescription file), this data is received by the Django application.
+2.  **Field Interception:** The `EncryptedTextField` or `EncryptedFileField` intercepts the data before it is saved to the database or file system.
+3.  **Key Retrieval:** The field dynamically retrieves the necessary cryptographic keys. This typically involves:
+    *   **Recipient's Public Key:** For asymmetric encryption, the public key of the intended recipient (e.g., the patient associated with the data) is fetched. This is indicated by `recipient_field_name='patient.profile'` in the field definitions, meaning the key is associated with the patient's profile.
+    *   **System's Private Key:** For decryption or signing, the system's private key might be used.
+4.  **Symmetric Key Generation (AES Key):** A unique, strong symmetric key (AES key) is generated for each piece of data to be encrypted. This is a common practice to ensure forward secrecy and limit the impact of a single key compromise.
+5.  **Data Encryption (AES):** The actual sensitive data (text or file content) is encrypted using the newly generated symmetric AES key. AES (Advanced Encryption Standard) is chosen for its speed and strong security.
+6.  **Symmetric Key Encryption (ECC):** The generated symmetric AES key is then encrypted using the recipient's public key (ECC). This ensures that only the recipient, possessing the corresponding private key, can decrypt the AES key.
+7.  **Storage:**
+    *   **Encrypted Data:** The AES-encrypted data (text or file content) is stored.
+        *   For `EncryptedTextField`, the encrypted text, along with the ECC-encrypted AES key and other metadata (e.g., IV, algorithm used), is typically bundled and stored in a single `encrypted_data` `TextField` in the database.
+        *   For `EncryptedFileField`, the AES-encrypted file content is saved to the designated `media/` directory (e.g., `media/prescriptions/`), and its metadata (including the ECC-encrypted AES key) is stored in the database.
+    *   **Metadata:** Information like the Initialization Vector (IV) used for AES, the specific encryption algorithm chosen (if adaptive), and potentially a hash for integrity checking, are also stored alongside the encrypted data.
+
+**Decryption Flow (Retrieving Data):**
+1.  **Data Retrieval:** When an authorized user requests to view sensitive data, the encrypted content and its associated metadata are retrieved from the database and/or file system.
+2.  **Field Interception:** The `EncryptedTextField` or `EncryptedFileField` intercepts the encrypted data.
+3.  **Key Retrieval:** The system retrieves the current user's private key (if the user is the recipient) or other necessary keys for decryption.
+4.  **Symmetric Key Decryption (ECC):** The ECC-encrypted AES key (retrieved from the stored metadata) is decrypted using the recipient's private key. This recovers the original symmetric AES key.
+5.  **Data Decryption (AES):** The AES-encrypted data (text or file content) is then decrypted using the recovered symmetric AES key.
+6.  **Data Presentation:** The original, decrypted data is then presented to the authorized user.
+
+This process ensures end-to-end encryption, where data is encrypted at rest and in transit, and only decrypted by authorized parties with the correct cryptographic keys, leveraging the efficiency of symmetric encryption for bulk data and the security of asymmetric encryption for key management.
+
+*   **Frontend (Client-side):**
+    *   Web browsers accessing the Django application.
+    *   (Potentially) IoT devices interacting via APIs.
+*   **Backend (Django Application):**
+    *   **Django Project (`healthcare/`):**
+        *   `settings.py`: Configuration for the entire project.
+        *   `urls.py`: Main URL routing.
+    *   **Django Apps:**
+        *   `users/`: Manages user authentication, authorization, and profiles.
+        *   `patients/`: Handles patient-specific data (appointments, diagnoses, prescriptions).
+        *   `doctors/`: Manages doctor-specific functionalities (viewing appointments, adding diagnoses/prescriptions).
+        *   `labs/`: Manages lab test requests and results.
+        *   `security/`: **Core security module.** Contains custom fields (`EncryptedTextField`, `EncryptedFileField`), AI integration logic (`AIEncryptor.py`), and cryptographic utilities.
+    *   **Database (SQLite by default, `db.sqlite3`):** Stores all structured data, including encrypted text fields and metadata for encrypted files.
+    *   **Media Storage (`media/` directory):** Stores uploaded files (e.g., prescriptions, lab results) after they have been encrypted.
+    *   **AI Models (`.pkl` files):** Pre-trained AI models are loaded and used by the `security` app for adaptive algorithm selection, anomaly detection, and strength prediction.
+    *   **Logging (`encryption_debug.log`):** Centralized logging for security-related events, AI decisions, and cryptographic operations.
+
+### 8.1. Data Flow (High-Level)
+
+1.  **User Interaction:** A doctor uploads a prescription or adds a diagnosis via the web interface.
+2.  **Data Capture:** Django forms capture the data, including files.
+3.  **AI Analysis (Adaptive Algorithm Selection):** The `security` module (e.g., `AIEncryptor`) might use `ai_algorithm_selector.pkl` to determine the best encryption algorithm based on context.
+4.  **Encryption:**
+    *   `EncryptedTextField` and `EncryptedFileField` intercept data saving.
+    *   Data is encrypted using the selected algorithm (e.g., AES) and ECC for key management.
+    *   Encrypted text is stored in the database (`encrypted_data` field).
+    *   Encrypted files are saved to the `media/` directory.
+5.  **Anomaly Detection:** In the background, or during specific operations, `ai_entropy_model.pkl` might analyze data patterns or user behavior, logging any anomalies to `encryption_debug.log`.
+6.  **Data Retrieval:** When an authorized user requests data, the `EncryptedTextField` and `EncryptedFileField` automatically decrypt the data using the appropriate keys and algorithms.
+7.  **Logging:** All significant security and AI-related events are logged to `encryption_debug.log`.
+
+This architecture ensures that sensitive healthcare data is protected throughout its lifecycle, from input to storage and retrieval, with an intelligent layer of AI-driven security.
+
+## 6. Results
+
+### 6.1 Test Set up Environment
+
+- Operating System: Windows (PowerShell)
+- Python: 3.11
+- Key packages: `django`, `cryptography`, `scikit-learn`, `numpy`
+- AI model files: `ai_algorithm_selector.pkl`, `ai_strength_predictor.pkl`, `ai_entropy_model.pkl`
+- Environment variables used for deterministic tests:
+  - `ENCRYPTION_FORCE_SCORE` to drive algorithm choice in encrypt flows
+  - `DECRYPTION_FORCE_ALGO_ID` to force algorithm during decrypt flows
+
+### 6.2 Test Procedures and Test Cases
+
+- Algorithm selection and adaptive decision logging
+  - Trigger `ALGO_SELECTION` and `ADAPTIVE` events and verify entries in daily log
+- Encryption/Decryption correctness and metadata
+  - AES-128/192/256: round-trip encrypt/decrypt; verify `key_size` and metrics logged
+  - RSA: round-trip with generated key; verify `public_key_pem` and `private_key_fingerprint`
+  - ECC: round-trip using `secp256r1`; verify `curve`, `public_key_pem`, `private_key_fingerprint`
+  - Hybrid ECC + AES: round-trip; verify presence of AES-key encapsulation metadata
+  - ChaCha20: round-trip; verify `key_size = 256`
+- Upload anomaly entries
+  - Prescription upload logging includes `algorithm_used`, `key_size`, and dynamic fields
+  - Lab result upload logging includes the same dynamic fields
+
+### 6.3 Snapshots
+
+- Algorithm selection and adaptive entries
+  - `c:\Users\SESA837127\Downloads\deee3 ada, alg\healthcare1\healthcare\security\logs\encryption_log_20251201.log:4` (algorithm selection)
+  - `c:\Users\SESA837127\Downloads\deee3 ada, alg\healthcare1\healthcare\security\logs\encryption_log_20251201.log:5` (adaptive decision)
+- Key-bearing encrypt/decrypt entries
+  - RSA encrypt/decrypt with `public_key_pem` and `private_key_fingerprint` at `:11`, `:13`, `:36`, `:38`
+  - ECC encrypt/decrypt with `public_key_pem` and `private_key_fingerprint` at `:16`, `:18`, `:41`, `:43`
+  - Hybrid encrypt/decrypt with key fingerprints at `:21`, `:23`, `:31`, `:33`, `:46`
+- Enriched upload anomalies with dynamic fields
+  - Prescription upload enriched entry at `:49` (`dynamic_mode`, `suggested_algorithm`, `suggested_key_length`, `rotation`, `score`)
+  - Lab result upload enriched entry at `:50` (same dynamic fields present)
+
+### 6.4 Analysis
+
+- Adaptive decisions align with real-time metrics and file types, selecting stronger algorithms for higher sensitivity or adverse conditions
+- Encrypt/decrypt flows consistently populate `algorithm_used` and `key_size`
+- ECC/Hybrid entries include non-sensitive key artefacts for auditing without exposing raw private keys
+- Upload anomaly entries now carry dynamic context, enabling unified visibility across all security events
+
+## 7. Conclusion
+
+### 7.1 Summary of the project work
+
+- Implemented AI-driven encryption with dynamic algorithm and key-length selection
+- Integrated anomaly logging into a unified daily security log
+- Ensured end-to-end encryption for text and file data using AES with ECC key management and Hybrid ECC+AES
+- Added comprehensive auditability: algorithm selection, adaptive decisions, encrypt/decrypt, and upload events
+
+### 7.2 Scope for future work
+
+- Add formal unit/integration tests for cryptographic flows and logging
+- Extend adaptive logic to include device trust scores and historical anomaly trends
+- Provide configurable policy profiles for different clinical contexts
+- Implement role-based encryption policies (e.g., per-department overrides)
+
+## Bibliography
+
+- FIPS PUB 197: Advanced Encryption Standard (AES)
+- NIST SP 800-38D: Recommendation for GCM Mode
+- NIST SP 800-56A: Recommendation for Pair-Wise Key Establishment Schemes (ECDH)
+- RFC 8439: ChaCha20 and Poly1305 for IETF Protocols
+- NIST SP 800-57: Recommendation for Key Management
+- HIPAA Security Rule (45 CFR §164 Subpart C)
+- Scikit-learn: Random Forests (Breiman, 2001)
+
+## Appendices
+
+### A. Project Planning
+
+#### A.1 Project Timeline
+
+- Week 1–2: Requirements gathering, initial data model and Django app setup
+- Week 3–5: Implement security module, AI models integration, basic encrypt/decrypt
+- Week 6–7: Upload flows, anomaly logging, unified encryption daily log
+- Week 8: Validation, simulations, documentation
+
+#### A.2 Budget Estimation
+
+- Development effort: engineering hours
+- Infrastructure: local compute and storage
+- Licenses: open-source packages (no additional license fees)
+
+### B. Sustainable Development Goals (SDGs) Address
+
+- SDG 3: Good Health and Well-being — secure handling of PHI
+- SDG 9: Industry, Innovation and Infrastructure — robust, privacy-preserving health tech
+- SDG 16: Peace, Justice and Strong Institutions — compliance and auditability
+
+### C. Self-Assessment of the Project
+
+- Strengths: adaptive encryption, unified logging, end-to-end protection
+- Risks: absence of formal test suite, need for policy governance
+- Mitigation: add tests, monitoring, and configurable policy engine
+
+### D. Input details
+
+#### D.1 Data Set Details
+
+- Primary inputs are user-submitted forms and uploaded files (diagnoses, prescriptions, lab results)
+- Synthetic test data used for simulations; no external datasets required
+
+#### D.2 Database details
+
+- SQLite (`db.sqlite3`) default
+- Key entities: `Appointment`, `Diagnosis`, `Prescription`, `LabTestRequest`, `LabTestResult`, `User/Profile`
+- Encrypted content stored in model fields and `encrypted_data` metadata columns
+
+### E. Configuration Details
+
+- AI model files located under project root: `ai_algorithm_selector.pkl`, `ai_strength_predictor.pkl`, `ai_entropy_model.pkl`
+- Security logs stored in `security/logs/` including daily `encryption_log_YYYYMMDD.log`
+- Environment variables:
+  - `ENCRYPTION_FORCE_SCORE` — override adaptive selection for deterministic testing
+  - `DECRYPTION_FORCE_ALGO_ID` — force algorithm during decryption
+- Typical commands:
+  - Run server: `python manage.py runserver`
+  - Simulate RSA/ECC/Hybrid flows: use `encrypt_with_ai` and `decrypt_with_ai` from `security.AIEncryptor`
+
+## 9. Detailed Security Components
+
+### 9.1 Encryption and Decryption (Low-Level)
+
+- AES
+  - Encrypt: `security/encryption_algorithms.py:10`
+  - Decrypt: `security/encryption_algorithms.py:42`
+  - Uses per-item IV and selected `strength` (`128/192/256`).
+- RSA
+  - Encrypt: `security/encryption_algorithms.py:65`
+  - Decrypt: `security/encryption_algorithms.py:88`
+  - Logs PEMs and fingerprints via `security/AIEncryptor.py:389-427`.
+- ECC
+  - Encrypt: `security/encryption_algorithms.py:104`
+  - Decrypt: `security/encryption_algorithms.py:162`
+  - Produces ephemeral public key bytes, AES tag/iv for wrapped payload.
+- Hybrid ECC + AES
+  - Encrypt: `security/encryption_algorithms.py:202`
+  - Decrypt: `security/encryption_algorithms.py:225`
+  - Encapsulates AES key with ECC; payload encrypted with AES, audited in `security/AIEncryptor.py:471-529` and `:868-927`.
+- ChaCha20
+  - Encrypt: `security/encryption_algorithms.py:233`
+  - Decrypt: `security/encryption_algorithms.py:264`
+  - Fixed 256-bit key; logged in `security/AIEncryptor.py:529-546` and `:939-971`.
+- Orchestration
+  - Encrypt: `security/AIEncryptor.py:169` (`encrypt_with_ai`)
+  - Decrypt: `security/AIEncryptor.py:574` (`decrypt_with_ai`)
+  - Central logging: `_write_encryption_log` `security/AIEncryptor.py:106` and DB logging `security/crypto_logger.py:12`.
+
+### 9.2 AI-Based Algorithm Selection
+
+- Selector
+  - Class: `security/AIEncryptor.py:142` (`AIAlgorithmSelector`)
+  - Predicts `algo_id` from `role`, `file_type`, `sensitivity`, `file_size_kb`, `access_frequency` using a RandomForest (`joblib.load`). See `security/AIEncryptor.py:148-152`.
+  - Strength predictor: `security/AIEncryptor.py:154-163` ensures key sizes are valid (`128/192/256`).
+- Logging
+  - Selection events written as `phase: "algorithm_selection"` with input metrics in the daily log (`security/AIEncryptor.py:194-215`).
+
+### 9.3 AI-Based Adaptive Encryption
+
+- Score computation
+  - Function: `_compute_dynamic_score` `security/AIEncryptor.py:24` uses threat, sensitivity, network, device and IoT health metrics.
+- Parameter selection
+  - Function: `_select_dynamic_params` `security/AIEncryptor.py:84` maps score and file type to `mode`, `algorithm`, `key_length`, `rotation`.
+- Override controls
+  - Optional forced selection via env `ENCRYPTION_FORCE_SCORE`, applied in `security/AIEncryptor.py:333-351` with `_override_algorithm_for_score` `:125-140`.
+- Logging
+  - Adaptive decisions mirrored as `phase: "adaptive"` including `dynamic_mode`, `suggested_algorithm`, `suggested_key_length`, `rotation`, `score` (`security/AIEncryptor.py:316-332`).
+
+### 9.4 Key Exchange Process
+
+- ECC-based key wrapping
+  - Hybrid flow encrypts AES key using ECC (`security/encryption_algorithms.py:202`), stores `ephemeral_public_key_for_aes_key`, AES tags/IVs.
+  - Decrypt unwraps with recipient private key (`security/encryption_algorithms.py:225`).
+- Pure ECC payload
+  - ECC encrypt/decrypt wraps payload with ephemeral key, IV, tag (`security/encryption_algorithms.py:104`, `:162`).
+- Key material handling
+  - Public PEMs logged, private fingerprints only (SHA-256) to avoid secret exposure (`security/AIEncryptor.py:419-426`, `:466-470`, `:520-528`).
+
+### 9.5 AI-Based Anomaly Detection
+
+- Detector
+  - Class: `security/anomaly_detector.py:26` with rule-based thresholds and AI models.
+  - Methods cover access frequency, repeated failures, unusual login times, resource spikes (`security/anomaly_detector.py:79-118`, `:401-418`).
+- AI models
+  - Isolation Forest and One-Class SVM used for unsupervised detection (`security/anomaly_detector.py:17-18`, `:222-231`).
+  - Training and prediction pipelines: `security/anomaly_detector.py:232-255`, `:320-343`.
+- Output logging
+
+  - Anomalies and self-healing actions logged via `log_anomaly_output` `security/anomaly_output_logger.py:5` and mirrored to daily logs (`:33-40`).
+
+### 9.6 Models and Packages
+
+- AI models
+  - Algorithm selector: `ai_algorithm_selector.pkl` (`RandomForestClassifier`).
+  - Strength predictor: `ai_strength_predictor.pkl` (regression).
+  - Entropy generator: `ai_entropy_model.pkl` with scaler `ai_entropy_model_scaler.pkl`; API in `security/ai_entropy_model.py:29`, `:115`.
+- Packages
+  - `scikit-learn`, `joblib`, `numpy` for ML; `cryptography` for ECC/AES primitives; Django for web and persistence.
+  - Entropy generation pipeline hashes model output to 256-bit bytes (`security/ai_entropy_model.py:181-185`).
+- Feature collection
+  - Runtime metrics sourced via `collect_all_features` `security/data_collector.py:626` and key/IV generated with `generate_encryption_key_and_iv` `security/data_collector.py:385`.
+
+### 9.7 Unified Logging
+
+- Daily file: `security/logs/encryption_log_YYYYMMDD.log` includes phases `algorithm_selection`, `adaptive`, `encrypt`, `decrypt`, `upload`.
+- Fields
+  - `timestamp`, `phase`, `selected_algo`, `algorithm_used`, `algo_id`, `key_size`, `dynamic_mode`, `suggested_algorithm`, `suggested_key_length`, `rotation`, `score`, `override_*`, `metrics`, and optional `public_key_pem`, `private_key_fingerprint`.
+- Writers
+  - Structured writer `_write_encryption_log` `security/AIEncryptor.py:106` and anomaly mirror `security/anomaly_output_logger.py:33-40`.
+
+### 9.8 End-to-End Workflow
+
+- Collect features and entropy: `security/ai_entropy_model.py:115`, `security/data_collector.py:626`.
+- Select algorithm: `security/AIEncryptor.py:148-152`; predict strength `:154-163`.
+- Compute adaptive parameters: `security/AIEncryptor.py:24`, `:84`.
+- Encrypt data with selected algorithm: `security/AIEncryptor.py:356-546`.
+- Log selection, adaptive, encrypt events: `security/AIEncryptor.py:194-215`, `:316-332`, `:551-570`.
+- Decrypt on access: `security/AIEncryptor.py:574-1009` with algorithm-specific branches, then log decrypt.
+- Detect anomalies and log/heal: `security/anomaly_detector.py:50-78`, `:344-399`.
+
+## Appendix A: Data Set Details / Inputs Details
+
+This appendix provides a comprehensive overview of the healthcare dataset utilized for developing and evaluating the AI-driven encryption and anomaly detection systems. It details the structure, content, and characteristics of the data, which is crucial for understanding the models' performance and applicability in a real-world healthcare setting.
+
+### A.1 Dataset Overview
+A description of the primary healthcare dataset, including its source, size (number of records and features), and the types of patient information it contains. This section will highlight how the dataset represents typical healthcare data, making it suitable for testing security and anomaly detection mechanisms.
+
+### A.2 Feature Description
+Detailed explanations of each feature (column) within the dataset. This includes data types, units of measurement, and their relevance to patient health status, medical conditions, and potential indicators for anomalous behavior. Features related to patient demographics, vital signs, lab results, and treatment history will be covered.
+
+### A.3 Statistical Analysis of Key Features
+Presentation of descriptive statistics (mean, median, standard deviation, range) and distributions for critical features. This analysis helps in understanding the baseline characteristics of the patient population and identifying potential biases or outliers that the anomaly detection system might target.
+
+### A.4 Health Status and Condition Distribution
+An examination of how different health statuses and medical conditions are represented within the dataset. This is vital for training and validating models that predict health outcomes or detect deviations from normal health patterns.
+
+#### A.4.1 Health Status Categories
+Breakdown of the various health status categories (e.g., healthy, at-risk, diagnosed with specific conditions) present in the dataset, along with their frequencies. This informs the classification tasks for health monitoring.
+
+#### A.4.2 Medical Condition Breakdown
+Detailed distribution of specific medical conditions (e.g., diabetes, hypertension, cardiovascular disease) within the patient cohort. This helps in understanding the prevalence of different diseases and their impact on the data used for anomaly detection.
+
+### A.5 Heatmap Analysis of Health Metrics
+Visual representation of the correlation matrix between various health metrics and features in the dataset. This heatmap helps identify strong positive or negative relationships between different patient parameters.
+
+#### A.5.1 Interpretation of Correlations
+Explanation of significant correlations observed in the heatmap. For instance, how certain vital signs correlate with specific medical conditions, or how lifestyle factors relate to health outcomes. These insights are critical for feature engineering in predictive and anomaly detection models.
+
+#### A.5.2 Implications for Health Monitoring Models
+Discussion on how the identified correlations inform the design and optimization of health monitoring and anomaly detection models. Understanding these relationships allows for more accurate feature selection and better interpretation of model outputs, especially when identifying unusual patterns that might indicate a health anomaly or a security breach.

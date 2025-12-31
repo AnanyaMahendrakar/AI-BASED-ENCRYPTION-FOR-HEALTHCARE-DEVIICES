@@ -1,0 +1,13 @@
+test_aes_256_encryption_decryption (__main__.TestAIBasedEncryption.test_aes_256_encryption_decryption) ... ok
+test_chacha20_encryption_decryption (__main__.TestAIBasedEncryption.test_chacha20_encryption_decryption) ... ok
+test_different_features_different_keys (__main__.TestAIBasedEncryption.test_different_features_different_keys) ... ok
+test_ecc_encryption_decryption (__main__.TestAIBasedEncryption.test_ecc_encryption_decryption) ... ok
+test_encryption_decryption_cycle (__main__.TestAIBasedEncryption.test_encryption_decryption_cycle) ... ok
+test_hybrid_encryption_decryption (__main__.TestAIBasedEncryption.test_hybrid_encryption_decryption) ... ok
+test_rsa_encryption_decryption (__main__.TestAIBasedEncryption.test_rsa_encryption_decryption) ... ok
+test_unsupported_algorithm_selection (__main__.TestAIBasedEncryption.test_unsupported_algorithm_selection) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 200.541s
+
+OK

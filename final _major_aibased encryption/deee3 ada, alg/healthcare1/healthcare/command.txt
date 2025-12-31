@@ -1,0 +1,29 @@
+to test :
+python manage.py test -v 2 
+run:
+python manage.py runserver 0.0.0.0:8000 
+
+$today = Get-Date -Format "yyyyMMdd"; $log = "c:\Users\win10\Downloads\final _major_aibased encryption\deee3 ada, alg\healthcare1\healthcare\security\logs\encryption_log_$today.log"; if (Test-Path $log) { Get-Content $log | Select-String '"phase": "algorithm_selection"' | Select-Object -First 5 | ForEach-Object { $_.Line } } else { Write-Output "No log file for $today" } 
+
+python manage.py shell -c "from security.AIEncryptor import encrypt_with_ai; import os; os.environ['ENCRYPTION_FORCE_SCORE']=''; result, algo_name, algo_id = encrypt_with_ai(1,0,3,100,5,b'hello'); print('OK', algo_name, algo_id)" 
+
+gives complete outputs:
+
+python manage.py shell -c "from security.AIEncryptor import encrypt_with_ai, decrypt_with_ai; data=b'roundtrip-test'; result, algo_name, algo_id = encrypt_with_ai(1,0,3,100,5,data, override_score=4); print('ENCRYPTED', algo_name, algo_id, sorted(result.keys())); priv = result.get('private_key_for_aes_key'); decrypted = decrypt_with_ai(algo_id, result, 1,0,3,100,5, private_key=priv); print('DECRYPTED_LEN', len(decrypted) if decrypted is not None else None)" 
+
+$today = Get-Date -Format "yyyyMMdd"; $log = "c:\Users\win10\Downloads\final _major_aibased encryption\deee3 ada, alg\healthcare1\healthcare\security\logs\encryption_log_$today.log"; if (Test-Path $log) { Get-Content $log | Select-String '"phase": "key_exchange"|"phase": "decrypt"' | Select-Object -Last 12 | ForEach-Object { $_.Line } } else { Write-Output "No log file for $today" } 
+
+encryption and decryption in one go:
+python manage.py shell -c "from security.AIEncryptor import encrypt_with_ai, decrypt_with_ai; data=b'roundtrip-test'; result, algo_name, algo_id = encrypt_with_ai(1,0,3,100,5,data, override_score=4); priv = result.get('private_key_for_aes_key'); decrypted = decrypt_with_ai(algo_id, result, 1,0,3,100,5, private_key=priv); print('DONE', algo_name, algo_id, len(decrypted) if decrypted is not None else None)"
+
+daily log for key exchange:
+$today = Get-Date -Format "yyyyMMdd"
+$log = "c:\Users\win10\Downloads\final _major_aibased encryption\deee3 ada, alg\healthcare1\healthcare\security\logs\encryption_log_$today.log"
+Get-Content $log | Select-String '"phase": "key_exchange"|"phase": "decrypt"' | Select-Object -Last 12 | ForEach-Object { $_.Line }
+
+key exchange for(hybrid+ecc)
+{"timestamp": "2025-12-29", "phase": "key_exchange", "selected_algo": "Hybrid ECC + AES (256-bit)", "algo_id": 4, "key_size": 256, "time_of_activity": 0, "dynamic_mode": "Critical", "suggested_algorithm": "Hybrid ECC + AES (256-bit)", "suggested_key_length": 256, "rotation": "immediate", "score": 4, "anomaly_detected": true, "file_anomaly": false, "override_score": 4, "forced": {"algo_id": 4, "strength": 256}, "metrics": {...}, "public_key_pem": "...", "private_key_fingerprint": "..."}
+
+to store todays outputs:
+
+$d=Get-Date -Format 'yyyyMMdd'; $dir='c:\Users\win10\Downloads\final _major_aibased encryption\deee3 ada, alg\healthcare1\healthcare\security\logs'; $log=Join-Path $dir ("encryption_log_{0}.log" -f $d); if(!(Test-Path $log)){New-Item -ItemType File -Path $log -Force | Out-Null}; (Get-Content $log -Encoding UTF8) | % { try { $o = $_ | ConvertFrom-Json; if ($o.timestamp) { $o.timestamp = ($o.timestamp -split 'T')[0] } $o | ConvertTo-Json -Compress } catch { $_ } } | Set-Content -Path $log -Encoding UTF8; Get-Content $log -Encoding UTF8 -Raw

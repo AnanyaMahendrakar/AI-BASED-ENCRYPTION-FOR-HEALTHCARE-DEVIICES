@@ -1,0 +1,28 @@
+test_aes_256_encryption_decryption (__main__.TestAIBasedEncryption.test_aes_256_encryption_decryption) ... ok
+test_chacha20_encryption_decryption (__main__.TestAIBasedEncryption.test_chacha20_encryption_decryption) ... ERROR
+test_different_features_different_keys (__main__.TestAIBasedEncryption.test_different_features_different_keys) ... ok
+test_ecc_encryption_decryption (__main__.TestAIBasedEncryption.test_ecc_encryption_decryption) ... ok
+test_encryption_decryption_cycle (__main__.TestAIBasedEncryption.test_encryption_decryption_cycle) ... ok
+test_hybrid_encryption_decryption (__main__.TestAIBasedEncryption.test_hybrid_encryption_decryption) ... ok
+test_rsa_encryption_decryption (__main__.TestAIBasedEncryption.test_rsa_encryption_decryption) ... ok
+test_unsupported_algorithm_selection (__main__.TestAIBasedEncryption.test_unsupported_algorithm_selection) ... ok
+
+======================================================================
+ERROR: test_chacha20_encryption_decryption (__main__.TestAIBasedEncryption.test_chacha20_encryption_decryption)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\SESA837127\AppData\Local\Programs\Python\Python311\Lib\unittest\mock.py", line 1378, in patched
+    return func(*newargs, **newkeywargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SESA837127\Downloads\deee3 ada, alg\healthcare1\healthcare\security\test_ai_encryption.py", line 460, in test_chacha20_encryption_decryption
+    decrypted_data = AIEncryptor.decrypt_with_ai(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\SESA837127\Downloads\deee3 ada, alg\healthcare1\healthcare\security\AIEncryptor.py", line 447, in decrypt_with_ai
+    decrypted_data = chacha20_decrypt(ciphertext, key, nonce, strength=strength, crypto_random=crypto_random)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: chacha20_decrypt() got an unexpected keyword argument 'crypto_random'
+
+----------------------------------------------------------------------
+Ran 8 tests in 201.575s
+
+FAILED (errors=1)
